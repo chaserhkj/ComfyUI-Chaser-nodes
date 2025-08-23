@@ -20,6 +20,7 @@ class UploadImagesToWebDAV:
     RETURN_TYPES=()
     OUTPUT_NODE = True
     CATEGORY = "Chaser Custom Nodes"
+    FUNCTION = "save_images"
     
     def save_images(self,
         images, url, username, password
