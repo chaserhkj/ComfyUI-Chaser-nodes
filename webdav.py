@@ -3,7 +3,7 @@ import requests
 import torch
 from fractions import Fraction
 from requests.auth import HTTPBasicAuth
-from PIL import Image
+from PIL import Image, ImageOps
 from datetime import datetime
 import numpy as np
 from io import BytesIO
@@ -83,3 +83,33 @@ class UploadWebMToWebDAV:
         _ = requests.put(full_url, data=buf, auth=HTTPBasicAuth(username, password))
         
         return []
+
+class LoadImageFromWebDAV:
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "url":("STRING",),
+                "username": ("STRING",),
+                "password": ("STRING",)
+            }
+        }
+
+    RETURN_TYPES=("IMAGE", )
+    CATEGORY = "Chaser Custom Nodes"
+    FUNCTION = "load_image"
+    
+    def load_image(self,
+        url, username, password
+    ):
+        resp = requests.get(url, auth=HTTPBasicAuth(username, password))
+        img_buf = BytesIO(resp.content)
+        img = Image.open(img_buf)
+        img = ImageOps.exif_transpose(img)
+        if img.mode == 'I':
+            img = img.point(lambda i: i * (1 / 255))
+        image = img.convert("RGB")
+        image = np.array(image).astype(np.float32) / 255.0
+        image = torch.from_numpy(image)[None,]
+
+        return (image, )
