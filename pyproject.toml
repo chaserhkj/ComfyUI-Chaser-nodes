@@ -5,9 +5,11 @@ description = "Chaser's personal ComfyUI custom node repo"
 readme = "README.md"
 license = "GPL-3.0-or-later"
 dependencies = [
+    "av>=15.0.0",
     "numpy>=2.3.2",
     "pillow>=11.3.0",
     "requests>=2.32.5",
+    "torch>=2.8.0",
 ]
 
 [project.urls]

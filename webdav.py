@@ -1,4 +1,7 @@
+import av
 import requests
+import torch
+from fractions import Fraction
 from requests.auth import HTTPBasicAuth
 from PIL import Image
 from datetime import datetime
@@ -36,4 +39,47 @@ class UploadImagesToWebDAV:
             _ = img_buf.seek(0)
             _ = requests.put(full_url, data=img_buf, auth=HTTPBasicAuth(username, password))
 
+        return []
+
+class UploadWebMToWebDAV:
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "video_frames": ("IMAGE",),
+                "fps": ("FLOAT", {"default": 24.0, "min": 0.01, "max": 1000.0, "step": 0.01}),
+                "crf": ("FLOAT", {"default": 32.0, "min": 0, "max": 63.0, "step": 1, "tooltip": "Higher crf means lower quality with a smaller file size, lower crf means higher quality higher filesize."}),
+                "url":("STRING",),
+                "username": ("STRING",),
+                "password": ("STRING",)
+            }
+        }
+
+    RETURN_TYPES=()
+    OUTPUT_NODE = True
+    CATEGORY = "Chaser Custom Nodes"
+    FUNCTION = "save_video"
+    
+    def save_video(self,
+        video_frames, fps, crf, url, username, password
+    ):
+        stamp = datetime.now().strftime("%Y%m%dT%H%M%S")
+        buf = BytesIO()
+        container = av.open(buf, format="webm")
+        stream = container.add_stream("libvpx-vp9", rate=Fraction(round(fps * 1000), 1000))
+        stream.width = video_frames.shape[-2]
+        stream.height = video_frames.shape[-3]
+        stream.pix_fmt = "yuv420p"
+        stream.bit_rate = 0
+        stream.options = {'crf': str(crf)}
+        for frame in video_frames:
+            frame = av.VideoFrame.from_ndarray(torch.clamp(frame[..., :3] * 255, min=0, max=255).to(device=torch.device("cpu"), dtype=torch.uint8).numpy(), format="rgb24")
+            for packet in stream.encode(frame):
+                container.mux(packet)
+        container.mux(stream.encode())
+        container.close()
+        full_url = f"{url}/{stamp}.webm"
+        _ = buf.seek(0)
+        _ = requests.put(full_url, data=buf, auth=HTTPBasicAuth(username, password))
+        
         return []
