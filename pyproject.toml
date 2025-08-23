@@ -1,0 +1,10 @@
+[project]
+name = "comfyui-chaser-nodes"
+version = "0.1.0"
+description = "Chaser's personal ComfyUI custom node repo"
+readme = "README.md"
+dependencies = [
+    "numpy>=2.3.2",
+    "pillow>=11.3.0",
+    "requests>=2.32.5",
+]
