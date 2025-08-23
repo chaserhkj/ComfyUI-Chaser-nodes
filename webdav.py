@@ -1,5 +1,5 @@
 import requests
-from requests.auth import HTTPDigestAuth
+from requests.auth import HTTPBasicAuth
 from PIL import Image
 from datetime import datetime
 import numpy as np
@@ -34,6 +34,6 @@ class UploadImagesToWebDAV:
             img.save(img_buf, format='PNG')
             full_url = f"{url}/{stamp}_{i}.png"
             _ = img_buf.seek(0)
-            _ = requests.put(full_url, data=img_buf, auth=HTTPDigestAuth(username, password))
+            _ = requests.put(full_url, data=img_buf, auth=HTTPBasicAuth(username, password))
 
         return []
