@@ -10,7 +10,7 @@ class UploadImagesToWebDAV:
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "images": ("Image",),
+                "images": ("IMAGE",),
                 "url":("STRING",),
                 "username": ("STRING",),
                 "password": ("STRING",)
