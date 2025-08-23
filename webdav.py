@@ -65,7 +65,7 @@ class UploadWebMToWebDAV:
     ):
         stamp = datetime.now().strftime("%Y%m%dT%H%M%S")
         buf = BytesIO()
-        container = av.open(buf, format="webm")
+        container = av.open(buf, format="webm", mode="w")
         stream = container.add_stream("libvpx-vp9", rate=Fraction(round(fps * 1000), 1000))
         stream.width = video_frames.shape[-2]
         stream.height = video_frames.shape[-3]
