@@ -35,3 +35,5 @@ class UploadImagesToWebDAV:
             full_url = f"{url}/{stamp}_{i}.png"
             _ = img_buf.seek(0)
             _ = requests.put(full_url, data=img_buf, auth=HTTPDigestAuth(username, password))
+
+        return []
