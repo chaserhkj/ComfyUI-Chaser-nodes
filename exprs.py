@@ -11,7 +11,7 @@ class IntExpr:
             "required":{
                 "expression": ("STRING", {"multiline": True})
             },
-            "optional": dict( (f"arg{k}", ("NUMERIC",)) for k in range(ARG_COUNT))
+            "optional": dict( (f"arg{k}", ("NUMERIC", {"defaultInput": True})) for k in range(ARG_COUNT))
         }
     RETURN_TYPES = ("INT", )
     CATEGORY = "Chaser Custom Nodes"
@@ -36,7 +36,7 @@ class FloatExpr:
             "required":{
                 "expression": ("STRING", {"multiline": True})
             },
-            "optional": dict( (f"arg{k}", ("NUMERIC",)) for k in range(ARG_COUNT))
+            "optional": dict( (f"arg{k}", ("NUMERIC", {"defaultInput": True})) for k in range(ARG_COUNT))
         }
     RETURN_TYPES = ("FLOAT", )
     CATEGORY = "Chaser Custom Nodes"
