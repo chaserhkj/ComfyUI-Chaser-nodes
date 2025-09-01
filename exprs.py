@@ -1,4 +1,3 @@
-from .utils import is_execution_model_version_supported
 from .exprs_eval import eval_s_expr
 from sexpdata import Symbol
 
