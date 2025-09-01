@@ -1,5 +1,5 @@
 from .exprs_eval import eval_s_expr
-from sexpdata import Symbol
+from sexpdata import Symbol, loads
 
 
 class _NumericType(str):
@@ -27,7 +27,8 @@ class IntExpr:
 
     def execute(self, **kwargs):
         args = dict((Symbol(k), v) for k, v in kwargs.items() if k.startswith("arg"))
-        return eval_s_expr(kwargs["expression"], args)
+        s_expr = loads(kwargs["expression"])
+        return eval_s_expr(s_expr, args)
 
 class FloatExpr:
     @classmethod
@@ -45,4 +46,5 @@ class FloatExpr:
 
     def execute(self, **kwargs):
         args = dict((Symbol(k), v) for k, v in kwargs.items() if k.startswith("arg"))
-        return eval_s_expr(kwargs["expression"], args)
+        s_expr = loads(kwargs["expression"])
+        return eval_s_expr(s_expr, args)
