@@ -1,6 +1,15 @@
 from .exprs_eval import eval_s_expr
 from sexpdata import Symbol
 
+
+class _NumericType(str):
+    def __ne__(self, other)-> bool:
+        if other == "INT" or other == "FLOAT":
+            return False
+        else:
+            return True
+numeric_type = _NumericType("*")
+
 ARG_COUNT=4
 class IntExpr:
     @classmethod
@@ -10,7 +19,7 @@ class IntExpr:
             "required":{
                 "expression": ("STRING", {"multiline": True})
             },
-            "optional": dict( (f"arg{k}", ("NUMERIC", {"defaultInput": True})) for k in range(ARG_COUNT))
+            "optional": dict( (f"arg{k}", (numeric_type, {"defaultInput": True})) for k in range(ARG_COUNT))
         }
     RETURN_TYPES = ("INT", )
     CATEGORY = "Chaser Custom Nodes"
@@ -35,7 +44,7 @@ class FloatExpr:
             "required":{
                 "expression": ("STRING", {"multiline": True})
             },
-            "optional": dict( (f"arg{k}", ("NUMERIC", {"defaultInput": True})) for k in range(ARG_COUNT))
+            "optional": dict( (f"arg{k}", (numeric_type, {"defaultInput": True})) for k in range(ARG_COUNT))
         }
     RETURN_TYPES = ("FLOAT", )
     CATEGORY = "Chaser Custom Nodes"
