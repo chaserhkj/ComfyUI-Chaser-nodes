@@ -25,13 +25,6 @@ class IntExpr:
     CATEGORY = "Chaser Custom Nodes"
     FUNCTION = "execute"
 
-    @classmethod
-    def VALIDATE_INPUTS(cls, input_types):
-        for i in range(ARG_COUNT):
-            if input_types.get(f"arg{i}") not in ("INT", "FLOAT"):
-                return f"arg{i} must be an INT or FLOAT type"
-        return True
-    
     def execute(self, **kwargs):
         args = dict((Symbol(k), v) for k, v in kwargs.items() if k.startswith("arg"))
         return eval_s_expr(kwargs["expression"], args)
@@ -50,13 +43,6 @@ class FloatExpr:
     CATEGORY = "Chaser Custom Nodes"
     FUNCTION = "execute"
 
-    @classmethod
-    def VALIDATE_INPUTS(cls, input_types):
-        for i in range(ARG_COUNT):
-            if input_types.get(f"arg{i}") not in ("INT", "FLOAT"):
-                return f"arg{i} must be an INT or FLOAT type"
-        return True
-    
     def execute(self, **kwargs):
         args = dict((Symbol(k), v) for k, v in kwargs.items() if k.startswith("arg"))
         return eval_s_expr(kwargs["expression"], args)
