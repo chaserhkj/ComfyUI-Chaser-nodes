@@ -28,7 +28,7 @@ class IntExpr:
     def execute(self, **kwargs):
         args = dict((Symbol(k), v) for k, v in kwargs.items() if k.startswith("arg"))
         s_expr = loads(kwargs["expression"])
-        return eval_s_expr(s_expr, args)
+        return (eval_s_expr(s_expr, args),)
 
 class FloatExpr:
     @classmethod
@@ -47,4 +47,4 @@ class FloatExpr:
     def execute(self, **kwargs):
         args = dict((Symbol(k), v) for k, v in kwargs.items() if k.startswith("arg"))
         s_expr = loads(kwargs["expression"])
-        return eval_s_expr(s_expr, args)
+        return (eval_s_expr(s_expr, args),)
