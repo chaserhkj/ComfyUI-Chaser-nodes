@@ -74,11 +74,15 @@ class PromptTemplate:
     FUNCTION = "apply_template"
 
     def apply_template(self, template, data, tmpl_dict=None):
+        env_config = {
+            "variable_start_string": "[",
+            "variable_end_string": "]"
+        }
         if tmpl_dict:
-            env = Environment(loader=DictLoader(tmpl_dict))
-            tmpl = env.from_string(template)
+            env = Environment(loader=DictLoader(tmpl_dict), **env_config)
         else:
-            tmpl = Template(template)
+            env = Environment(**env_config)
+        tmpl = env.from_string(template)
         return (tmpl.render(**data), )
 
 class YAMLData:

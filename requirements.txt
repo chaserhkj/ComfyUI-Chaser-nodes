@@ -2,6 +2,10 @@
 #    uv pip compile pyproject.toml -o requirements.txt --no-deps --no-emit-package torch --no-emit-package numpy --no-emit-package pillow
 av==15.1.0
     # via comfyui-chaser-nodes (pyproject.toml)
+jinja2==3.1.6
+    # via comfyui-chaser-nodes (pyproject.toml)
+pyyaml==6.0.2
+    # via comfyui-chaser-nodes (pyproject.toml)
 requests==2.32.5
     # via comfyui-chaser-nodes (pyproject.toml)
 sexpdata==1.0.2
