@@ -19,3 +19,13 @@ Repository = "https://github.com/chaserhkj/ComfyUI-Chaser-nodes"
 [tool.comfy]
 PublisherId = "chaserhkj"
 DisplayName = "Chaser's Custom Nodes" 
+
+[tool.pyright]
+reportUnknownMemberType   = "hint"
+reportUnknownArgumentType = "hint"
+reportUnknownVariableType = "hint"
+reportUnknownReturnType   = "hint"
+reportUnknownParameterType= "hint"
+reportUnknownFunctionType = "hint"
+reportUnknownCallType     = "hint"
+
