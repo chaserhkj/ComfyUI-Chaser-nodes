@@ -1,6 +1,6 @@
 from .webdav import UploadImagesToWebDAV, UploadWebMToWebDAV, LoadImageFromWebDAV
 from .exprs import IntExpr, FloatExpr
-from .prompt import PromptFormatter  # <-- added import
+from .prompt import PromptFormatter, PromptTemplate, YAMLData, YAMLFileLoader, MergeData
 
 NODE_CLASS_MAPPINGS = {
     "UploadImagesToWebDAV": UploadImagesToWebDAV,
@@ -9,6 +9,10 @@ NODE_CLASS_MAPPINGS = {
     "EvalIntExpr": IntExpr,
     "EvalFloatExpr": FloatExpr,
     "PromptFormatter": PromptFormatter,
+    "PromptTemplate": PromptTemplate,
+    "YAMLData": YAMLData,
+    "YAMLFileLoader": YAMLFileLoader,
+    "MergeData": MergeData,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
@@ -18,4 +22,8 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "EvalIntExpr": "Evaluate S-Expr with integer output",
     "EvalFloatExpr": "Evaluate S-Expr with float output",
     "PromptFormatter": "Prompt Formatter",
+    "PromptTemplate": "Prompt Template",
+    "YAMLData": "YAML Data",
+    "YAMLFileLoader": "YAML File Loader",
+    "MergeData": "Merge Data",
 }
