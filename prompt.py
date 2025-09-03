@@ -215,3 +215,21 @@ class RegisterTemplate:
         # Add/overwrite the template
         result[template_name] = template_source
         return (result, )
+
+class SetData:
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "data": ("*", {"forceInput": True}),
+                "key": ("STRING",), 
+            },
+        }
+
+    RETURN_TYPES = ("PYDICT", )
+    OUTPUT_NODE = False
+    CATEGORY = "Chaser Custom Nodes"
+    FUNCTION = "set_data"
+
+    def set_data(self, data, key):
+        return ({key: data}, )
