@@ -1,6 +1,9 @@
 from .webdav import UploadImagesToWebDAV, UploadWebMToWebDAV, LoadImageFromWebDAV
 from .exprs import IntExpr, FloatExpr
-from .prompt import PromptFormatter, PromptTemplate, YAMLData, YAMLFileLoader, MergeData
+from .prompt import (
+    PromptFormatter, PromptTemplate, YAMLData, YAMLFileLoader, MergeData,
+    TemplateFileLoader, RegisterTemplate
+)
 
 NODE_CLASS_MAPPINGS = {
     "UploadImagesToWebDAV": UploadImagesToWebDAV,
@@ -13,6 +16,8 @@ NODE_CLASS_MAPPINGS = {
     "YAMLData": YAMLData,
     "YAMLFileLoader": YAMLFileLoader,
     "MergeData": MergeData,
+    "TemplateFileLoader": TemplateFileLoader,
+    "RegisterTemplate": RegisterTemplate,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
@@ -26,4 +31,6 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "YAMLData": "YAML Data",
     "YAMLFileLoader": "YAML File Loader",
     "MergeData": "Merge Data",
+    "TemplateFileLoader": "Load Template File",
+    "RegisterTemplate": "Register Template",
 }
