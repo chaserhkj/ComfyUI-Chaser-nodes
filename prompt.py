@@ -45,7 +45,7 @@ class PromptFormatter:
             }
         }
 
-    RETURN_TYPES = ("STRING", )
+    RETURN_TYPES = ("STRING", "TAGS")
     OUTPUT_NODE = False
     CATEGORY = "Chaser Custom Nodes"
     FUNCTION = "format_prompt"
@@ -53,7 +53,7 @@ class PromptFormatter:
     def format_prompt(self, prompt, prefix=""):
         combined_tags = split_prompt(prefix) + split_prompt(prompt)
         formatted = ", ".join(combined_tags)
-        return (formatted, )
+        return (formatted, combined_tags)
 
 class PromptTemplate:
     @classmethod
