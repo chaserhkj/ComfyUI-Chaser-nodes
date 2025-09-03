@@ -61,10 +61,10 @@ class PromptTemplate:
         return {
             "required": {
                 "template": ("STRING", {"multiline": True}),
-                "data": ("PYDICT", {"forceInput": True}),
             },
             "optional": {
                 "tmpl_dict": ("TMPL_DICT", {"forceInput": True}),
+                "data": ("PYDICT", {"forceInput": True}),
             },
         }
 
@@ -73,7 +73,7 @@ class PromptTemplate:
     CATEGORY = "Chaser Custom Nodes"
     FUNCTION = "apply_template"
 
-    def apply_template(self, template, data, tmpl_dict=None):
+    def apply_template(self, template, data={}, tmpl_dict=None):
         env_config = {
             "variable_start_string": "[",
             "variable_end_string": "]"
