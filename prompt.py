@@ -1,5 +1,5 @@
 import yaml
-from jinja2 import Template
+from jinja2 import Environment, DictLoader, Template
 import os
 
 def split_around_brackets(input_str):
@@ -63,6 +63,9 @@ class PromptTemplate:
                 "template": ("STRING", {"multiline": True}),
                 "data": ("PYDICT", {"forceInput": True}),
             },
+            "optional": {
+                "tmpl_dict": ("TMPL_DICT", {"forceInput": True}),
+            },
         }
 
     RETURN_TYPES = ("STRING", )
@@ -70,8 +73,13 @@ class PromptTemplate:
     CATEGORY = "Chaser Custom Nodes"
     FUNCTION = "apply_template"
 
-    def apply_template(self, template, data):
-        return (Template(template).render(**data), )
+    def apply_template(self, template, data, tmpl_dict=None):
+        if tmpl_dict:
+            env = Environment(loader=DictLoader(tmpl_dict))
+            tmpl = env.from_string(template)
+        else:
+            tmpl = Template(template)
+        return (tmpl.render(**data), )
 
 class YAMLData:
     @classmethod
@@ -141,3 +149,65 @@ class MergeData:
         if override_dict:
             merged.update(override_dict)
         return (merged, )
+
+class TemplateFileLoader:
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "template_file": (cls._template_options(), {}),
+            },
+            "optional": {
+                "tmpl_dict": ("TMPL_DICT", {"forceInput": True}),
+            },
+        }
+
+    RETURN_TYPES = ("TMPL_DICT", )
+    OUTPUT_NODE = False
+    CATEGORY = "Chaser Custom Nodes"
+    FUNCTION = "load_template"
+
+    @staticmethod
+    def _template_options() -> list[str]:
+        dir_path = os.path.dirname(os.path.abspath(__file__))
+        return sorted(
+            f for f in os.listdir(dir_path)
+            if f.lower().endswith((".j2", ".jinja", ".txt")) and os.path.isfile(os.path.join(dir_path, f))
+        )
+
+    def load_template(self, template_file: str, tmpl_dict=None):
+        full_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), template_file)
+        with open(full_path, "r", encoding="utf-8") as f:
+            template_str = f.read()
+        name = os.path.splitext(template_file)[0]
+        if tmpl_dict:
+            result = tmpl_dict.copy()
+        else:
+            result = {}
+        result[name] = template_str
+        return (result, )
+
+class RegisterTemplate:
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "template_name": ("STRING", {"forceInput": True}),
+                "template_source": ("STRING", {"multiline": True}),
+            },
+            "optional": {
+                "tmpl_dict": ("TMPL_DICT", {"forceInput": True}),
+            },
+        }
+
+    RETURN_TYPES = ("TMPL_DICT", )
+    OUTPUT_NODE = False
+    CATEGORY = "Chaser Custom Nodes"
+    FUNCTION = "register_template"
+
+    def register_template(self, template_name, template_source, tmpl_dict=None):
+        # Start with the supplied dict or an empty one
+        result = tmpl_dict.copy() if tmpl_dict else {}
+        # Add/overwrite the template
+        result[template_name] = template_source
+        return (result, )
