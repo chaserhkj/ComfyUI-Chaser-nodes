@@ -96,14 +96,7 @@ class YAMLFileLoader:
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "yaml_file": (
-                    "STRING",
-                    {
-                        "widget": "ComboBox",
-                        # Dynamically list all YAML files in this folder
-                        "options": cls._yaml_options,
-                    },
-                ),
+                "yaml_file": (cls._yaml_options(),{}),
             },
         }
 
