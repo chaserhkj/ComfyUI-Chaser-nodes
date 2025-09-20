@@ -62,7 +62,7 @@ class UploadWebMToWebDAV:
     FUNCTION = "save_video"
     
     def save_video(self,
-        video_frames, fps, crf, url, username, password, chunk_size
+        video_frames, fps, crf, url, username, password, dufs_chunk_size_mb 
     ):
         stamp = datetime.now().strftime("%Y%m%dT%H%M%S")
         buf = BytesIO()
@@ -81,10 +81,10 @@ class UploadWebMToWebDAV:
         container.close()
         full_url = f"{url}/{stamp}.webm"
         _ = buf.seek(0)
-        if chunk_size == 0:
+        if dufs_chunk_size_mb == 0:
             _ = requests.put(full_url, data=buf, auth=HTTPBasicAuth(username, password))
         else:
-            size_bytes = chunk_size * 1024 * 1024
+            size_bytes = dufs_chunk_size_mb * 1024 * 1024
             chunk = buf.read(size_bytes)
             if chunk:
                 _ = requests.put(full_url, data=chunk, auth=HTTPBasicAuth(username, password))
