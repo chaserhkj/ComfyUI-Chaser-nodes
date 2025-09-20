@@ -51,7 +51,8 @@ class UploadWebMToWebDAV:
                 "crf": ("FLOAT", {"default": 32.0, "min": 0, "max": 63.0, "step": 1, "tooltip": "Higher crf means lower quality with a smaller file size, lower crf means higher quality higher filesize."}),
                 "url":("STRING",),
                 "username": ("STRING",),
-                "password": ("STRING",)
+                "password": ("STRING",),
+                "dufs_chunk_size_mb":("INT", {"default": 0, "min": 0, "max": 128, "step": 1, "tooltip": "Chunked upload size for dufs"})
             }
         }
 
@@ -61,7 +62,7 @@ class UploadWebMToWebDAV:
     FUNCTION = "save_video"
     
     def save_video(self,
-        video_frames, fps, crf, url, username, password
+        video_frames, fps, crf, url, username, password, chunk_size
     ):
         stamp = datetime.now().strftime("%Y%m%dT%H%M%S")
         buf = BytesIO()
@@ -80,7 +81,19 @@ class UploadWebMToWebDAV:
         container.close()
         full_url = f"{url}/{stamp}.webm"
         _ = buf.seek(0)
-        _ = requests.put(full_url, data=buf, auth=HTTPBasicAuth(username, password))
+        if chunk_size == 0:
+            _ = requests.put(full_url, data=buf, auth=HTTPBasicAuth(username, password))
+        else:
+            size_bytes = chunk_size * 1024 * 1024
+            chunk = buf.read(size_bytes)
+            if chunk:
+                _ = requests.put(full_url, data=chunk, auth=HTTPBasicAuth(username, password))
+            while True:
+                chunk = buf.read(size_bytes)
+                if not chunk:
+                    break
+                _ = requests.patch(full_url, data=chunk, auth=HTTPBasicAuth(username, password),
+                    headers = {"X-Update-Range": "append"})
         
         return []
 
