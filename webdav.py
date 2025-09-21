@@ -48,7 +48,7 @@ class UploadWebMToWebDAV:
             "required": {
                 "video_frames": ("IMAGE",),
                 "fps": ("FLOAT", {"default": 24.0, "min": 0.01, "max": 1000.0, "step": 0.01}),
-                "crf": ("FLOAT", {"default": 32.0, "min": 0, "max": 63.0, "step": 1, "tooltip": "Higher crf means lower quality with a smaller file size, lower crf means higher quality higher filesize."}),
+                "crf": ("FLOAT", {"default": 30.0, "min": 0, "max": 63.0, "step": 1, "tooltip": "Higher crf means lower quality with a smaller file size, lower crf means higher quality higher filesize."}),
                 "url":("STRING",),
                 "username": ("STRING",),
                 "password": ("STRING",),
@@ -96,6 +96,63 @@ class UploadWebMToWebDAV:
                     headers = {"X-Update-Range": "append"})
         
         return []
+
+class UploadMP4ToWebDAV:
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "video_frames": ("IMAGE",),
+                "fps": ("FLOAT", {"default": 24.0, "min": 0.01, "max": 1000.0, "step": 0.01}),
+                "crf": ("FLOAT", {"default": 23.0, "min": 0, "max": 63.0, "step": 1, "tooltip": "Higher crf means lower quality with a smaller file size, lower crf means higher quality higher filesize."}),
+                "url":("STRING",),
+                "username": ("STRING",),
+                "password": ("STRING",),
+                "dufs_chunk_size_mb":("INT", {"default": 0, "min": 0, "max": 128, "step": 1, "tooltip": "Chunked upload size for dufs"})
+            }
+        }
+
+    RETURN_TYPES=()
+    OUTPUT_NODE = True
+    CATEGORY = "Chaser Custom Nodes"
+    FUNCTION = "save_video"
+    
+    def save_video(self,
+        video_frames, fps, crf, url, username, password, dufs_chunk_size_mb 
+    ):
+        stamp = datetime.now().strftime("%Y%m%dT%H%M%S")
+        buf = BytesIO()
+        container = av.open(buf, format="mp4", mode="w")
+        stream = container.add_stream("libx265", rate=Fraction(round(fps * 1000), 1000))
+        stream.width = video_frames.shape[-2]
+        stream.height = video_frames.shape[-3]
+        stream.pix_fmt = "yuv420p"
+        stream.bit_rate = 0
+        stream.options = {'crf': str(crf)}
+        for frame in video_frames:
+            frame = av.VideoFrame.from_ndarray(torch.clamp(frame[..., :3] * 255, min=0, max=255).to(device=torch.device("cpu"), dtype=torch.uint8).numpy(), format="rgb24")
+            for packet in stream.encode(frame):
+                container.mux(packet)
+        container.mux(stream.encode())
+        container.close()
+        full_url = f"{url}/{stamp}.mp4"
+        _ = buf.seek(0)
+        if dufs_chunk_size_mb == 0:
+            _ = requests.put(full_url, data=buf, auth=HTTPBasicAuth(username, password))
+        else:
+            size_bytes = dufs_chunk_size_mb * 1024 * 1024
+            chunk = buf.read(size_bytes)
+            if chunk:
+                _ = requests.put(full_url, data=chunk, auth=HTTPBasicAuth(username, password))
+            while True:
+                chunk = buf.read(size_bytes)
+                if not chunk:
+                    break
+                _ = requests.patch(full_url, data=chunk, auth=HTTPBasicAuth(username, password),
+                    headers = {"X-Update-Range": "append"})
+        
+        return []
+
 
 class LoadImageFromWebDAV:
     @classmethod
